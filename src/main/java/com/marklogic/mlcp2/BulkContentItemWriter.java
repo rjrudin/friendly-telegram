@@ -4,15 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.dataservices.IOEndpoint;
 import com.marklogic.client.dataservices.InputCaller;
+import com.marklogic.client.ext.DatabaseClientConfig;
+import com.marklogic.client.ext.DefaultConfiguredDatabaseClientFactory;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamSupport;
 import org.springframework.batch.item.ItemStreamWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,14 +45,13 @@ import java.util.List;
  */
 public class BulkContentItemWriter extends ItemStreamSupport implements ItemStreamWriter<Content> {
 
-    private List<DatabaseClient> databaseClients;
+    // TODO We'll want to support multiple hosts, perhaps dynamically via the Manage API?
+    @Autowired
+    private DatabaseClientConfig databaseClientConfig;
+
     private int threadCount = 24;
     private List<InputCaller.BulkInputCaller<InputStream>> bulkInputCallers;
     private int callerCounter = 0;
-
-    public BulkContentItemWriter(List<DatabaseClient> databaseClients) {
-        this.databaseClients = databaseClients;
-    }
 
     @Override
     public void open(ExecutionContext executionContext) {
@@ -58,6 +61,9 @@ public class BulkContentItemWriter extends ItemStreamSupport implements ItemStre
 
         bulkInputCallers = new ArrayList<>();
 
+        DatabaseClient databaseClient = new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(databaseClientConfig);
+
+        List<DatabaseClient> databaseClients = Arrays.asList(databaseClient);
         databaseClients.forEach(client -> {
             InputCaller<InputStream> inputCaller;
             try {
