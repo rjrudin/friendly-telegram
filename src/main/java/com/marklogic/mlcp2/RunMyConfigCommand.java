@@ -1,10 +1,8 @@
 package com.marklogic.mlcp2;
 
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -16,10 +14,16 @@ import java.util.Map;
  * Configuration classes that it needs.
  */
 @Parameters(commandDescription = "My description goes here")
-public class RunMyConfigCommand implements MlcpCommand {
+public class RunMyConfigCommand implements JobCommand {
+
+    @Parameter(
+            names = {"--input_file_path"},
+            description = "TODO"
+    )
+    private String inputFilePath;
 
     @Override
-    public void run() {
+    public void runJob() throws JobExecutionException {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(
                 CommonConfig.class,
                 MyConfig.class
@@ -29,14 +33,12 @@ public class RunMyConfigCommand implements MlcpCommand {
         Job job = ctx.getBean(Job.class);
 
         Map<String, JobParameter> jobParams = new HashMap<>();
-        jobParams.put("+host", new JobParameter("somehost"));
-        jobParams.put("-hidden", new JobParameter("somehost"));
-        JobExecution jobExecution;
-        try {
-            jobExecution = jobLauncher.run(job, new JobParameters(jobParams));
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        jobParams.put("input_file_path", new JobParameter(inputFilePath));
+        JobExecution jobExecution = jobLauncher.run(job, new JobParameters(jobParams));
         System.out.println(jobExecution);
+    }
+
+    public void setInputFilePath(String inputFilePath) {
+        this.inputFilePath = inputFilePath;
     }
 }

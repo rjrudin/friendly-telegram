@@ -42,6 +42,12 @@ public class CommonOptions {
     private CommonOptions() {
     }
 
+    /**
+     * Using this until I figure out a better way to inject the options in this class into a Spring environment as
+     * properties.
+     *
+     * @return
+     */
     public static CommonOptions getInstance() {
         return SINGLETON;
     }

@@ -1,6 +1,7 @@
 package com.marklogic.mlcp2;
 
 import com.beust.jcommander.JCommander;
+import org.springframework.batch.core.JobExecutionException;
 
 public class Main {
 
@@ -16,7 +17,8 @@ public class Main {
         args = new String[]{
                 "--username", "admin",
                 "--password", "admin",
-                "runMyConfig"
+                "runMyConfig",
+                "--input_file_path", "data/csv/customers1.csv"
         };
 
         JCommander commander = JCommander
@@ -31,7 +33,11 @@ public class Main {
         if (parsedCommand == null) {
             commander.usage();
         } else {
-            ((MlcpCommand) commander.getCommands().get(parsedCommand).getObjects().get(0)).run();
+            try {
+                ((JobCommand) commander.getCommands().get(parsedCommand).getObjects().get(0)).runJob();
+            } catch (JobExecutionException e) {
+                throw new RuntimeException("Job exception: " + e.getMessage(), e);
+            }
         }
     }
 }

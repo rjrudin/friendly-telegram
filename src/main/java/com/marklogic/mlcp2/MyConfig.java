@@ -52,9 +52,10 @@ public class MyConfig {
      */
     @Bean
     @JobScope
-    public Step myStep(StepBuilderFactory stepBuilderFactory,
-                       @Value("#{jobParameters['host']}") String host) {
-
+    public Step myStep(
+            StepBuilderFactory stepBuilderFactory,
+            @Value("#{jobParameters['input_file_path']}") String inputFilePath
+    ) {
         final String delimiter = ",";
 
         DefaultLineMapper lineMapper = new DefaultLineMapper();
@@ -63,7 +64,7 @@ public class MyConfig {
         lineMapper.setFieldSetMapper(new JsonFieldSetMapper());
 
         FlatFileItemReader<JsonDocument> reader = new FlatFileItemReaderBuilder<ObjectNode>()
-                .resource(new FileSystemResource("data/csv/customers1.csv"))
+                .resource(new FileSystemResource(inputFilePath))
                 .name("csvReader")
                 .linesToSkip(1)
                 .skippedLinesCallback(line -> lineTokenizer.setNames(line.split(delimiter)))
@@ -73,7 +74,6 @@ public class MyConfig {
         return stepBuilderFactory.get("step1")
                 .<JsonDocument, Content>chunk(1)
                 .reader(reader)
-//                .processor(processor)
                 .writer(bulkContentItemWriter())
                 .build();
     }
