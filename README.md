@@ -1,1 +1,1 @@
-mlcp-spring-batch
+Prototype of an ML tool on Spring Batch
