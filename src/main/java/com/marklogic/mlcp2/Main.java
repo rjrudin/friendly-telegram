@@ -14,11 +14,14 @@ public class Main {
      */
     public static void main(String[] args) {
         args = new String[]{
+                "--username", "admin",
+                "--password", "admin",
                 "runMyConfig"
         };
-        
+
         JCommander commander = JCommander
                 .newBuilder()
+                .addObject(CommonOptions.getInstance())
                 .addCommand("runMyConfig", new RunMyConfigCommand())
                 .build();
         commander.setProgramName("java -jar <name of jar>");
@@ -28,7 +31,7 @@ public class Main {
         if (parsedCommand == null) {
             commander.usage();
         } else {
-            ((Runnable) commander.getCommands().get(parsedCommand).getObjects().get(0)).run();
+            ((MlcpCommand) commander.getCommands().get(parsedCommand).getObjects().get(0)).run();
         }
     }
 }

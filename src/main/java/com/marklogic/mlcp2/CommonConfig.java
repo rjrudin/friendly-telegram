@@ -11,16 +11,19 @@ public class CommonConfig {
 
     @Bean
     public ManageClient manageClient() {
-        return new ManageClient(new ManageConfig("localhost", 8002, "admin", "admin"));
+        CommonOptions options = CommonOptions.getInstance();
+        return new ManageClient(new ManageConfig(options.getHost(), 8002, options.getUsername(), options.getPassword()));
     }
 
     @Bean
     public DatabaseClientConfig databaseClientConfig() {
+        CommonOptions options = CommonOptions.getInstance();
+
         DatabaseClientConfig config = new DatabaseClientConfig();
-        config.setHost("localhost");
-        config.setPort(8003);
-        config.setUsername("admin");
-        config.setPassword("admin");
+        config.setHost(options.getHost());
+        config.setPort(options.getPort());
+        config.setUsername(options.getUsername());
+        config.setPassword(options.getPassword());
         return config;
     }
 }
