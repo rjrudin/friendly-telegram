@@ -2,8 +2,6 @@ package com.marklogic.mlcp2;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -33,9 +31,6 @@ public class IngestRowsCommand implements JobCommand {
         Map<String, JobParameter> jobParams = new HashMap<>();
         jobParams.put("jdbc_url", new JobParameter(jdbcUrl));
         JobExecution jobExecution = jobLauncher.run(job, new JobParameters(jobParams));
-//        DatabaseClient client = DatabaseClientFactory.newClient("localhost", 8003,
-//            new DatabaseClientFactory.DigestAuthContext("admin", "admin"));
-        //client.newJSONDocumentManager().write("/a/jobExecution.json", new JacksonHandle())
         System.out.println(jobExecution);
         System.out.println(jobExecution.getExecutionContext());
         System.out.println(jobExecution.getJobInstance());
