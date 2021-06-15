@@ -14,12 +14,22 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
+        args = new String[]{
+            "--username", "admin",
+            "--password", "admin"
+//            "ingestRows",
+//            "--jdbc_url", "jdbc:h2:file:./data/h2/sample"
+            , "ingestFiles"
+            , "--input_file_path", "data/csv/**/*.csv"
+            //, "--input_file_path", "data/csv/customers1.csv"
+        };
+
         JCommander commander = JCommander
-                .newBuilder()
-                .addObject(CommonOptions.getInstance())
-                .addCommand("ingestFiles", new IngestFilesCommand())
-                .addCommand("ingestRows", new IngestRowsCommand())
-                .build();
+            .newBuilder()
+            .addObject(CommonOptions.getInstance())
+            .addCommand("ingestFiles", new IngestFilesCommand())
+            .addCommand("ingestRows", new IngestRowsCommand())
+            .build();
         commander.setProgramName("java -jar <name of jar>");
 
         commander.parse(args);

@@ -1,10 +1,12 @@
 package com.marklogic.mlcp2;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,16 +26,16 @@ public class IngestRowsConfig {
                    @Qualifier("clearDatabaseStep") Step step,
                    @Qualifier("ingestRowsStep") Step myStep) {
         return jobBuilderFactory.get("ingestRowsJob")
-                .start(step)
-                .next(myStep)
-                .build();
+            .start(step)
+            .next(myStep)
+            .build();
     }
 
     @Bean
     public Step clearDatabaseStep(StepBuilderFactory stepBuilderFactory) {
         return stepBuilderFactory.get("clearDatabaseStep")
-                .tasklet(clearDatabaseTasklet())
-                .build();
+            .tasklet(clearDatabaseTasklet())
+            .build();
     }
 
     @Bean
@@ -44,8 +46,8 @@ public class IngestRowsConfig {
     @Bean
     @JobScope
     public Step ingestRowsStep(
-            StepBuilderFactory stepBuilderFactory,
-            @Value("#{jobParameters['jdbc_url']}") String jdbcUrl
+        StepBuilderFactory stepBuilderFactory,
+        @Value("#{jobParameters['jdbc_url']}") String jdbcUrl
     ) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
@@ -64,11 +66,23 @@ public class IngestRowsConfig {
         ItemReader<Map<String, Object>> reader = r;
 
         return stepBuilderFactory.get("ingestRowsStep")
-                .<Map<String, Object>, Content>chunk(100)
-                .reader(reader)
-                .processor(new JsonColumnMapConverter())
-                .writer(bulkContentItemWriter())
-                .build();
+            .<Map<String, Object>, Content>chunk(100)
+            .reader(reader)
+            .processor(new JsonColumnMapConverter())
+            .writer(bulkContentItemWriter())
+            .listener(new StepExecutionListener() {
+                @Override
+                public void beforeStep(StepExecution stepExecution) {
+                    System.out.println("Before step! " + stepExecution);
+                }
+
+                @Override
+                public ExitStatus afterStep(StepExecution stepExecution) {
+                    System.out.println("After step! " + stepExecution);
+                    return ExitStatus.COMPLETED;
+                }
+            })
+            .build();
     }
 
     @Bean
