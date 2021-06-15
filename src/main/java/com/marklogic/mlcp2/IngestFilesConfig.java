@@ -17,14 +17,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
 @Configuration
-public class MyConfig {
+public class IngestFilesConfig {
 
 //    @Value("file:data/json/*.json")
 //    private Resource[] inputResources;
 
-    /**
-     * Defines the job for Spring Batch to run. This job consists of a single step, defined below.
-     */
     @Bean
     public Job job(JobBuilderFactory jobBuilderFactory,
                    @Qualifier("clearDatabaseStep") Step step,
@@ -47,9 +44,6 @@ public class MyConfig {
         return new ClearDatabaseTasklet();
     }
 
-    /**
-     * Defines the single step in the job, along with all of the job parameters for the migration process.
-     */
     @Bean
     @JobScope
     public Step myStep(
@@ -72,7 +66,7 @@ public class MyConfig {
                 .build();
 
         return stepBuilderFactory.get("step1")
-                .<JsonDocument, Content>chunk(1)
+                .<JsonDocument, Content>chunk(100)
                 .reader(reader)
                 .writer(bulkContentItemWriter())
                 .build();

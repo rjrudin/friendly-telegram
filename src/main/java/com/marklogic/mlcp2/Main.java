@@ -17,14 +17,16 @@ public class Main {
         args = new String[]{
                 "--username", "admin",
                 "--password", "admin",
-                "runMyConfig",
-                "--input_file_path", "data/csv/customers1.csv"
+                "ingestRows"
+//                "ingestFiles",
+//                "--input_file_path", "data/csv/customers1.csv"
         };
 
         JCommander commander = JCommander
                 .newBuilder()
                 .addObject(CommonOptions.getInstance())
-                .addCommand("runMyConfig", new RunMyConfigCommand())
+                .addCommand("ingestFiles", new IngestFilesCommand())
+                .addCommand("ingestRows", new IngestRowsCommand())
                 .build();
         commander.setProgramName("java -jar <name of jar>");
 
