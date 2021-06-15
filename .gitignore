@@ -4,3 +4,7 @@ bin
 build
 out
 data/h2/*.mv.db
+.classpath
+.project
+.settings
+.vscode

@@ -39,8 +39,11 @@ dependencies {
     // For H2 test
     implementation "com.h2database:h2:1.4.193"
 
-//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+   testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 task loadH2Data(type: JavaExec) {

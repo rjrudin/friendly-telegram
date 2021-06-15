@@ -14,14 +14,6 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-        args = new String[]{
-                "--username", "admin",
-                "--password", "admin",
-                "ingestRows"
-//                "ingestFiles",
-//                "--input_file_path", "data/csv/customers1.csv"
-        };
-
         JCommander commander = JCommander
                 .newBuilder()
                 .addObject(CommonOptions.getInstance())

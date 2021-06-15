@@ -8,6 +8,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
@@ -43,11 +44,12 @@ public class IngestRowsConfig {
     @Bean
     @JobScope
     public Step ingestRowsStep(
-            StepBuilderFactory stepBuilderFactory
+            StepBuilderFactory stepBuilderFactory,
+            @Value("#{jobParameters['jdbc_url']}") String jdbcUrl
     ) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:file:./data/h2/sample");
+        dataSource.setUrl(jdbcUrl);
         dataSource.setUsername("sa");
         dataSource.setPassword("");
 
