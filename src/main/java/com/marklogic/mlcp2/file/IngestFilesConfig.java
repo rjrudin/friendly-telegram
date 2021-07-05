@@ -1,5 +1,6 @@
-package com.marklogic.mlcp2;
+package com.marklogic.mlcp2.file;
 
+import com.marklogic.mlcp2.*;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;

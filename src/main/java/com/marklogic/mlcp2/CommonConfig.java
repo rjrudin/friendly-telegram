@@ -3,6 +3,7 @@ package com.marklogic.mlcp2;
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mlcp2.cli.CommonOptions;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.context.annotation.Bean;
 

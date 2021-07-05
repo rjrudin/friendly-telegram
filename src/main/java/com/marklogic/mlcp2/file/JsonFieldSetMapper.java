@@ -1,7 +1,8 @@
-package com.marklogic.mlcp2;
+package com.marklogic.mlcp2.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.mlcp2.JsonDocument;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 

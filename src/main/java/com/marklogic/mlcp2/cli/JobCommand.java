@@ -1,4 +1,4 @@
-package com.marklogic.mlcp2;
+package com.marklogic.mlcp2.cli;
 
 import org.springframework.batch.core.JobExecutionException;
 

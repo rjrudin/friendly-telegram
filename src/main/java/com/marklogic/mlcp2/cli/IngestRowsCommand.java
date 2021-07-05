@@ -1,8 +1,9 @@
-package com.marklogic.mlcp2;
+package com.marklogic.mlcp2.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.mlcp2.CommonConfig;
+import com.marklogic.mlcp2.jdbc.IngestRowsConfig;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -10,39 +11,34 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * It seems to make sense for a Command to be responsible for instantiating the Spring container, choosing the
- * Configuration classes that it needs.
- */
 @Parameters(commandDescription = "My description goes here")
-public class IngestFilesCommand extends LoggingObject implements JobCommand {
+public class IngestRowsCommand implements JobCommand {
 
     @Parameter(
-        names = {"--input_file_path"},
+        names = {"--jdbc_url"},
         description = "TODO"
     )
-    private String inputFilePath;
+    private String jdbcUrl;
 
     @Override
     public void runJob() throws JobExecutionException {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(
             CommonConfig.class,
-            IngestFilesConfig.class
+            IngestRowsConfig.class
         );
 
         JobLauncher jobLauncher = ctx.getBean(JobLauncher.class);
         Job job = ctx.getBean(Job.class);
 
         Map<String, JobParameter> jobParams = new HashMap<>();
-        jobParams.put("input_file_path", new JobParameter(inputFilePath));
+        jobParams.put("jdbc_url", new JobParameter(jdbcUrl));
         JobExecution jobExecution = jobLauncher.run(job, new JobParameters(jobParams));
-
-        logger.info("JobExecution: " + jobExecution);
-        logger.info("ExecutionContext: " + jobExecution.getExecutionContext());
-        logger.info("JobInstance: " + jobExecution.getJobInstance());
+        System.out.println(jobExecution);
+        System.out.println(jobExecution.getExecutionContext());
+        System.out.println(jobExecution.getJobInstance());
     }
 
-    public void setInputFilePath(String inputFilePath) {
-        this.inputFilePath = inputFilePath;
+    public void setJdbcUrl(String jdbcUrl) {
+        this.jdbcUrl = jdbcUrl;
     }
 }
