@@ -60,4 +60,8 @@ task loadH2Data(type: JavaExec) {
 task run(type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     main = "com.marklogic.mlcp2.cli.Main"
+    args = [
+        "--username", "admin",
+        "--password", "admin"
+    ]
 }

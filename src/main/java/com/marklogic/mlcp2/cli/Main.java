@@ -5,28 +5,11 @@ import org.springframework.batch.core.JobExecutionException;
 
 public class Main {
 
-    /**
-     * I think every JCommander Command = a Spring Batch Job.
-     * <p>
-     * We then have a bunch of common options for e.g. authentication, and then each Job can have its own
-     * Job-specific arguments.
-     *
-     * @param args
-     */
     public static void main(String[] args) {
-        args = new String[]{
-            "--username", "admin",
-            "--password", "admin"
-//            "ingestRows",
-//            "--jdbc_url", "jdbc:h2:file:./data/h2/sample"
-            , "ingestFiles"
-            , "--input_file_path", "data/csv/**/*.csv"
-            //, "--input_file_path", "data/csv/customers1.csv"
-        };
-
         JCommander commander = JCommander
             .newBuilder()
             .addObject(CommonOptions.getInstance())
+            .addCommand("custom", new CustomCommand())
             .addCommand("ingestFiles", new IngestFilesCommand())
             .addCommand("ingestRows", new IngestRowsCommand())
             .build();
