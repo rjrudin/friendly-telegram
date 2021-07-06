@@ -4,15 +4,14 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.marklogic.mlcp2.CommonConfig;
 import com.marklogic.mlcp2.jdbc.IngestRowsConfig;
-import org.springframework.batch.core.*;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.batch.core.JobExecutionException;
+import org.springframework.batch.core.JobParameter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Parameters(commandDescription = "My description goes here")
-public class IngestRowsCommand implements JobCommand {
+public class IngestRowsCommand extends CommandSupport {
 
     @Parameter(
         names = {"--jdbc_url"},
@@ -22,20 +21,10 @@ public class IngestRowsCommand implements JobCommand {
 
     @Override
     public void runJob() throws JobExecutionException {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(
-            CommonConfig.class,
-            IngestRowsConfig.class
-        );
-
-        JobLauncher jobLauncher = ctx.getBean(JobLauncher.class);
-        Job job = ctx.getBean(Job.class);
-
         Map<String, JobParameter> jobParams = new HashMap<>();
         jobParams.put("jdbc_url", new JobParameter(jdbcUrl));
-        JobExecution jobExecution = jobLauncher.run(job, new JobParameters(jobParams));
-        System.out.println(jobExecution);
-        System.out.println(jobExecution.getExecutionContext());
-        System.out.println(jobExecution.getJobInstance());
+
+        runJobWithParameters(jobParams, CommonConfig.class, IngestRowsConfig.class);
     }
 
     public void setJdbcUrl(String jdbcUrl) {

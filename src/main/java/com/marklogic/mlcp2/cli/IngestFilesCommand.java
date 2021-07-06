@@ -2,12 +2,10 @@ package com.marklogic.mlcp2.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.mlcp2.CommonConfig;
 import com.marklogic.mlcp2.file.IngestFilesConfig;
-import org.springframework.batch.core.*;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.batch.core.JobExecutionException;
+import org.springframework.batch.core.JobParameter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +15,7 @@ import java.util.Map;
  * Configuration classes that it needs.
  */
 @Parameters(commandDescription = "My description goes here")
-public class IngestFilesCommand extends LoggingObject implements JobCommand {
+public class IngestFilesCommand extends CommandSupport {
 
     @Parameter(
         names = {"--input_file_path"},
@@ -27,21 +25,9 @@ public class IngestFilesCommand extends LoggingObject implements JobCommand {
 
     @Override
     public void runJob() throws JobExecutionException {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(
-            CommonConfig.class,
-            IngestFilesConfig.class
-        );
-
-        JobLauncher jobLauncher = ctx.getBean(JobLauncher.class);
-        Job job = ctx.getBean(Job.class);
-
         Map<String, JobParameter> jobParams = new HashMap<>();
         jobParams.put("input_file_path", new JobParameter(inputFilePath));
-        JobExecution jobExecution = jobLauncher.run(job, new JobParameters(jobParams));
-
-        logger.info("JobExecution: " + jobExecution);
-        logger.info("ExecutionContext: " + jobExecution.getExecutionContext());
-        logger.info("JobInstance: " + jobExecution.getJobInstance());
+        runJobWithParameters(jobParams, CommonConfig.class, IngestFilesConfig.class);
     }
 
     public void setInputFilePath(String inputFilePath) {

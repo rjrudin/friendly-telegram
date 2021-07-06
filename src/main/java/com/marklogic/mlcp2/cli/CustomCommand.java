@@ -3,16 +3,14 @@ package com.marklogic.mlcp2.cli;
 import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.marklogic.client.ext.helper.LoggingObject;
-import org.springframework.batch.core.*;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.batch.core.JobExecutionException;
+import org.springframework.batch.core.JobParameter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Parameters(commandDescription = "Allows for a custom Configuration class to be used")
-public class CustomCommand extends LoggingObject implements JobCommand {
+public class CustomCommand extends CommandSupport {
 
     @Parameter(
         names = {"--class_name"},
@@ -33,21 +31,12 @@ public class CustomCommand extends LoggingObject implements JobCommand {
             throw new IllegalArgumentException("Unable to find class definition for class name: " + className, e);
         }
 
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(customClass);
-
-        JobLauncher jobLauncher = ctx.getBean(JobLauncher.class);
-        Job job = ctx.getBean(Job.class);
-
         Map<String, JobParameter> jobParams = new HashMap<>();
         if (dynamicParams != null) {
             dynamicParams.forEach((name, value) -> jobParams.put(name, new JobParameter(value)));
         }
 
-        JobExecution jobExecution = jobLauncher.run(job, new JobParameters(jobParams));
-
-        logger.info("JobExecution: " + jobExecution);
-        logger.info("ExecutionContext: " + jobExecution.getExecutionContext());
-        logger.info("JobInstance: " + jobExecution.getJobInstance());
+        runJobWithParameters(jobParams, customClass);
     }
 
     public void setClassName(String className) {
