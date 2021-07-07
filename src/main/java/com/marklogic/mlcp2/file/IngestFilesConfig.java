@@ -1,6 +1,9 @@
 package com.marklogic.mlcp2.file;
 
-import com.marklogic.mlcp2.*;
+import com.marklogic.mlcp2.BulkContentItemWriter;
+import com.marklogic.mlcp2.Content;
+import com.marklogic.mlcp2.JsonDocument;
+import com.marklogic.mlcp2.LoggingStepExecutionListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -12,7 +15,6 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.builder.MultiResourceItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,25 +30,8 @@ public class IngestFilesConfig {
 //    private Resource[] inputResources;
 
     @Bean
-    public Job job(JobBuilderFactory jobBuilderFactory,
-                   @Qualifier("clearDatabaseStep") Step step,
-                   @Qualifier("myStep") Step myStep) {
-        return jobBuilderFactory.get("mlcpJob")
-            .start(step)
-            .next(myStep)
-            .build();
-    }
-
-    @Bean
-    public Step clearDatabaseStep(StepBuilderFactory stepBuilderFactory) {
-        return stepBuilderFactory.get("clearDatabaseStep")
-            .tasklet(clearDatabaseTasklet())
-            .build();
-    }
-
-    @Bean
-    public ClearDatabaseTasklet clearDatabaseTasklet() {
-        return new ClearDatabaseTasklet();
+    public Job job(JobBuilderFactory jobBuilderFactory, Step myStep) {
+        return jobBuilderFactory.get("mlcpJob").start(myStep).build();
     }
 
     @Bean

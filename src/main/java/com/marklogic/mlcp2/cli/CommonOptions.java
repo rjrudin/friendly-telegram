@@ -2,6 +2,8 @@ package com.marklogic.mlcp2.cli;
 
 import com.beust.jcommander.Parameter;
 
+import java.util.Properties;
+
 public class CommonOptions {
 
     @Parameter(
@@ -40,6 +42,15 @@ public class CommonOptions {
     private final static CommonOptions SINGLETON = new CommonOptions();
 
     private CommonOptions() {
+    }
+
+    public Properties toProperties() {
+        Properties props = new Properties();
+        props.setProperty("host", host);
+        props.setProperty("port", port + "");
+        props.setProperty("username", username);
+        props.setProperty("password", password);
+        return props;
     }
 
     /**

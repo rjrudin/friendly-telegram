@@ -1,6 +1,7 @@
 package com.marklogic.mlcp2.cli;
 
 import com.marklogic.client.ext.helper.LoggingObject;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -13,7 +14,10 @@ import java.util.Map;
 public abstract class CommandSupport extends LoggingObject implements JobCommand {
 
     protected JobExecution runJobWithParameters(Map<String, JobParameter> jobParameterMap, Class<?>... configurationClasses) throws JobExecutionException {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(configurationClasses);
+        // CliConfig handles adding a new Spring properties source
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(
+            ArrayUtils.addFirst(configurationClasses, CliConfig.class)
+        );
 
         JobLauncher jobLauncher = ctx.getBean(JobLauncher.class);
         Job job = ctx.getBean(Job.class);
