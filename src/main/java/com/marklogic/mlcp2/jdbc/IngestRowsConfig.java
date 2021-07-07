@@ -1,5 +1,7 @@
 package com.marklogic.mlcp2.jdbc;
 
+import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.mlcp2.BaseConfig;
 import com.marklogic.mlcp2.BulkContentItemWriter;
 import com.marklogic.mlcp2.Content;
 import org.springframework.batch.core.*;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -19,7 +22,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import java.util.Map;
 
 @Configuration
-public class IngestRowsConfig {
+@Import(BaseConfig.class)
+public class IngestRowsConfig extends LoggingObject {
 
     @Autowired
     Environment environment;
@@ -38,10 +42,10 @@ public class IngestRowsConfig {
     ) {
         // TODO Use a connection pool here
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(environment.getProperty("jdbcDriver"));
-        dataSource.setUrl(environment.getProperty("jdbcUrl"));
-        dataSource.setUsername(environment.getProperty("jdbcUsername"));
-        dataSource.setPassword(environment.getProperty("jdbcPassword"));
+        dataSource.setDriverClassName(environment.getProperty("jdbc_driver"));
+        dataSource.setUrl(environment.getProperty("jdbc_url"));
+        dataSource.setUsername(environment.getProperty("jdbc_username"));
+        dataSource.setPassword(environment.getProperty("jdbc_password"));
 
         // Uses Spring Batch's JdbcCursorItemReader and Spring JDBC's ColumnMapRowMapper to map each row
         // to a Map<String, Object>. Normally, if you want more control, standard practice is to bind column values to
@@ -53,8 +57,6 @@ public class IngestRowsConfig {
         jdbcReader.setRowMapper(new ColumnMapRowMapper());
         ItemReader<Map<String, Object>> reader = jdbcReader;
 
-        System.out.println("BTCH: " + batchSize);
-
         return stepBuilderFactory.get("ingestRowsStep")
             .<Map<String, Object>, Content>chunk(batchSize)
             .reader(reader)
@@ -63,12 +65,12 @@ public class IngestRowsConfig {
             .listener(new StepExecutionListener() {
                 @Override
                 public void beforeStep(StepExecution stepExecution) {
-                    System.out.println("Before step! " + stepExecution);
+                    logger.info("Before step: " + stepExecution);
                 }
 
                 @Override
                 public ExitStatus afterStep(StepExecution stepExecution) {
-                    System.out.println("After step! " + stepExecution);
+                    logger.info("After step: " + stepExecution);
                     return ExitStatus.COMPLETED;
                 }
             })

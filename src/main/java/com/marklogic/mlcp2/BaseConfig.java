@@ -1,34 +1,32 @@
 package com.marklogic.mlcp2;
 
 import com.marklogic.client.ext.DatabaseClientConfig;
+import com.marklogic.client.ext.helper.LoggingObject;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.Environment;
 
-import java.util.Properties;
-
+/**
+ * Defines a base configuration for MLCP batch jobs.
+ */
 @EnableBatchProcessing
-public class CommonConfig {
+public class BaseConfig extends LoggingObject {
 
     @Autowired
-    ConfigurableEnvironment environment;
-
-    public static Properties environmentProperties = new Properties();
+    Environment environment;
 
     @Bean
+    // Ensures this is immediately created so that its properties can be immediately added to the Spring environment
     @Lazy(false)
-    public PropertiesPropertySource commonEnvironmentProperties() {
-        System.out.println("Hi from CommonConfig!");
-        PropertiesPropertySource source = new PropertiesPropertySource("commonEnvironmentProperties", environmentProperties);
-        environment.getPropertySources().addFirst(source);
-        return source;
+    public EnvironmentPropertySource environmentPropertySource() {
+        return new EnvironmentPropertySource();
     }
 
     @Bean
     public DatabaseClientConfig databaseClientConfig() {
+        // TODO Add support for other properties
         DatabaseClientConfig config = new DatabaseClientConfig();
         config.setHost(environment.getProperty("host"));
         config.setPort(environment.getProperty("port", Integer.class));

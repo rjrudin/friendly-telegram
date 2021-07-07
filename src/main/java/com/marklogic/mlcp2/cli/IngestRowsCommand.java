@@ -3,14 +3,12 @@ package com.marklogic.mlcp2.cli;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
-import com.marklogic.mlcp2.CommonConfig;
 import com.marklogic.mlcp2.jdbc.IngestRowsConfig;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.JobParameter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * So should every command be a singleton? That allows for it to also be a Configuration class, where it can then
@@ -20,54 +18,46 @@ import java.util.Properties;
 public class IngestRowsCommand extends CommandSupport {
 
     @ParametersDelegate
-    private CommonOptions commonOptions = new CommonOptions();
+    CommonOptions commonOptions = new CommonOptions();
 
     @Parameter(
         names = {"--jdbc_driver"},
         description = "TODO"
     )
-    private String jdbcDriver;
+    String jdbcDriver;
 
     @Parameter(
         names = {"--jdbc_url"}
     )
-    private String jdbcUrl;
+    String jdbcUrl;
 
     @Parameter(
         names = {"--jdbc_username"}
     )
-    private String jdbcUsername;
+    String jdbcUsername;
 
     @Parameter(
         names = {"--jdbc_password"}
     )
-    private String jdbcPassword;
+    String jdbcPassword;
 
     @Parameter(
         names = {"--sql"}
     )
-    private String sql;
-
-    public Properties getEnvironmentProperties() {
-        Properties props = new Properties();
-        props.putAll(commonOptions.getEnvironmentProperties());
-        props.setProperty("jdbcDriver", jdbcDriver);
-        props.setProperty("jdbcUrl", jdbcUrl);
-        props.setProperty("jdbcUsername", jdbcUsername);
-        props.setProperty("jdbcPassword", jdbcPassword);
-        return props;
-    }
+    String sql;
 
     @Override
     public void runJob() throws JobExecutionException {
+        addCommonEnvironmentProperties(commonOptions)
+            .addEnvironmentProperty("jdbc_driver", jdbcDriver)
+            .addEnvironmentProperty("jdbc_url", jdbcUrl)
+            .addEnvironmentProperty("jdbc_username", jdbcUsername)
+            .addEnvironmentProperty("jdbc_password", jdbcPassword);
+
         Map<String, JobParameter> jobParams = new HashMap<>();
         jobParams.put("sql", new JobParameter(sql));
-        System.out.println("BS: " + commonOptions.getBatchSize());
-        jobParams.put("batch_size", new JobParameter(new Long(commonOptions.getBatchSize())));
-
-        CommonConfig.environmentProperties.putAll(getEnvironmentProperties());
-        runJobWithParameters(jobParams, CommonConfig.class, IngestRowsConfig.class);
+        jobParams.put("batch_size", new JobParameter(new Long(commonOptions.batchSize)));
+        runJobWithParameters(jobParams, IngestRowsConfig.class);
     }
-
 }
 

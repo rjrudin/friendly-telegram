@@ -2,7 +2,7 @@ package com.marklogic.mlcp2.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.marklogic.mlcp2.CommonConfig;
+import com.beust.jcommander.ParametersDelegate;
 import com.marklogic.mlcp2.file.IngestFilesConfig;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.JobParameter;
@@ -17,20 +17,21 @@ import java.util.Map;
 @Parameters(commandDescription = "My description goes here")
 public class IngestFilesCommand extends CommandSupport {
 
+    @ParametersDelegate
+    CommonOptions commonOptions = new CommonOptions();
+
     @Parameter(
         names = {"--input_file_path"},
         description = "TODO"
     )
-    private String inputFilePath;
+    String inputFilePath;
 
     @Override
     public void runJob() throws JobExecutionException {
+        addCommonEnvironmentProperties(commonOptions);
+
         Map<String, JobParameter> jobParams = new HashMap<>();
         jobParams.put("input_file_path", new JobParameter(inputFilePath));
-        runJobWithParameters(jobParams, CommonConfig.class, IngestFilesConfig.class);
-    }
-
-    public void setInputFilePath(String inputFilePath) {
-        this.inputFilePath = inputFilePath;
+        runJobWithParameters(jobParams, IngestFilesConfig.class);
     }
 }

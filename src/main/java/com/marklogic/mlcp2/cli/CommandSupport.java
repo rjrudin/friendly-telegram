@@ -1,7 +1,7 @@
 package com.marklogic.mlcp2.cli;
 
-import com.beust.jcommander.Parameters;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.mlcp2.EnvironmentPropertySource;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -9,10 +9,19 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.Map;
 
 /**
- * Not sure if this will hold us as having value, but creating it to avoid duplication.
+ * Not sure if this will hold us as having value, but creating it now to avoid duplication.
  */
-@Parameters
 public abstract class CommandSupport extends LoggingObject implements JobCommand {
+
+    protected CommandSupport addCommonEnvironmentProperties(CommonOptions options) {
+        EnvironmentPropertySource.environmentProperties.putAll(options.getEnvironmentProperties());
+        return this;
+    }
+
+    protected CommandSupport addEnvironmentProperty(String name, Object value) {
+        EnvironmentPropertySource.environmentProperties.put(name, value);
+        return this;
+    }
 
     protected JobExecution runJobWithParameters(Map<String, JobParameter> jobParameterMap, Class<?>... configurationClasses) throws JobExecutionException {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(configurationClasses);

@@ -1,9 +1,6 @@
 package com.marklogic.mlcp2.file;
 
-import com.marklogic.mlcp2.BulkContentItemWriter;
-import com.marklogic.mlcp2.Content;
-import com.marklogic.mlcp2.JsonDocument;
-import com.marklogic.mlcp2.LoggingStepExecutionListener;
+import com.marklogic.mlcp2.*;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -18,12 +15,14 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.IOException;
 
 @Configuration
+@Import(BaseConfig.class)
 public class IngestFilesConfig {
 
 //    @Value("file:data/json/*.json")
