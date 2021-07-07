@@ -20,6 +20,7 @@ public class IngestRowsNoCliTest extends AbstractTest {
 //
     /**
      * So we want to reuse the Config class, and we'll need to push in job params and environment properties.
+     * So we'll just demonstrate everything without the CLI being used here.
      */
     @Test
     void test() {
