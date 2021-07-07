@@ -16,7 +16,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import javax.sql.DataSource;
 import java.util.Map;
 
 @Configuration
@@ -31,34 +30,33 @@ public class IngestRowsConfig {
     }
 
     @Bean
-    public DataSource dataSource() {
+    @JobScope
+    public Step ingestRowsStep(
+        StepBuilderFactory stepBuilderFactory,
+        @Value("#{jobParameters['batch_size']}") Integer batchSize,
+        @Value("#{jobParameters['sql']}") String sql
+    ) {
         // TODO Use a connection pool here
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(environment.getProperty("jdbcDriver"));
         dataSource.setUrl(environment.getProperty("jdbcUrl"));
         dataSource.setUsername(environment.getProperty("jdbcUsername"));
         dataSource.setPassword(environment.getProperty("jdbcPassword"));
-        return dataSource;
-    }
 
-    @Bean
-    @JobScope
-    public Step ingestRowsStep(
-        StepBuilderFactory stepBuilderFactory,
-        @Value("#{jobParameters['sql']}") String sql
-    ) {
         // Uses Spring Batch's JdbcCursorItemReader and Spring JDBC's ColumnMapRowMapper to map each row
         // to a Map<String, Object>. Normally, if you want more control, standard practice is to bind column values to
         // a POJO and perform any validation/transformation/etc you need to on that object.
         JdbcCursorItemReader<Map<String, Object>> jdbcReader = new JdbcCursorItemReader();
         jdbcReader.setRowMapper(new ColumnMapRowMapper());
-        jdbcReader.setDataSource(dataSource());
+        jdbcReader.setDataSource(dataSource);
         jdbcReader.setSql(sql);
         jdbcReader.setRowMapper(new ColumnMapRowMapper());
         ItemReader<Map<String, Object>> reader = jdbcReader;
 
+        System.out.println("BTCH: " + batchSize);
+
         return stepBuilderFactory.get("ingestRowsStep")
-            .<Map<String, Object>, Content>chunk(100)
+            .<Map<String, Object>, Content>chunk(batchSize)
             .reader(reader)
             .processor(new JsonColumnMapConverter())
             .writer(bulkContentItemWriter())

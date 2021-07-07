@@ -8,7 +8,6 @@ public class Main {
     public static void main(String[] args) {
         JCommander commander = JCommander
             .newBuilder()
-            .addObject(CommonOptions.getInstance())
             .addCommand("custom", new CustomCommand())
             .addCommand("ingestFiles", new IngestFilesCommand())
             .addCommand("ingestRows", new IngestRowsCommand())

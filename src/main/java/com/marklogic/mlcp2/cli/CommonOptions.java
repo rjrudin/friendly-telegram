@@ -7,60 +7,50 @@ import java.util.Properties;
 public class CommonOptions {
 
     @Parameter(
-            names = {"--host"},
-            description = "TODO"
+        names = {"--host"},
+        required = true,
+        description = "TODO"
     )
-    private String host = "localhost";
+    private String host;
 
     @Parameter(
-            names = {"--port"},
-            description = "TODO"
+        names = {"--port"},
+        required = true,
+        description = "TODO"
     )
-    private int port = 8003;
+    private int port;
 
     @Parameter(
-            names = {"--managePort"},
-            description = "TODO"
+        names = {"--managePort"},
+        description = "TODO"
     )
     private int managePort = 8002;
 
     @Parameter(
-            names = {"--username"},
-            required = true,
-            description = "TODO"
+        names = {"--username"},
+        required = true,
+        description = "TODO"
     )
     private String username;
 
     @Parameter(
-            names = {"--password"},
-            required = true,
-            password = true,
-            description = "TODO"
+        names = {"--password"},
+        required = true,
+        password = true,
+        description = "TODO"
     )
     private String password;
 
-    private final static CommonOptions SINGLETON = new CommonOptions();
+    @Parameter(names = {"--batch_size"}, required = false)
+    private Integer batchSize = 100;
 
-    private CommonOptions() {
-    }
-
-    public Properties toProperties() {
+    public Properties getEnvironmentProperties() {
         Properties props = new Properties();
         props.setProperty("host", host);
         props.setProperty("port", port + "");
         props.setProperty("username", username);
         props.setProperty("password", password);
         return props;
-    }
-
-    /**
-     * Using this until I figure out a better way to inject the options in this class into a Spring environment as
-     * properties.
-     *
-     * @return
-     */
-    public static CommonOptions getInstance() {
-        return SINGLETON;
     }
 
     public String getHost() {
@@ -101,5 +91,13 @@ public class CommonOptions {
 
     public void setManagePort(int managePort) {
         this.managePort = managePort;
+    }
+
+    public Integer getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(Integer batchSize) {
+        this.batchSize = batchSize;
     }
 }

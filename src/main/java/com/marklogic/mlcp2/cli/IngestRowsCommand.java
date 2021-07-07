@@ -2,19 +2,25 @@ package com.marklogic.mlcp2.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.ParametersDelegate;
 import com.marklogic.mlcp2.CommonConfig;
 import com.marklogic.mlcp2.jdbc.IngestRowsConfig;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.JobParameter;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 
-import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
+/**
+ * So should every command be a singleton? That allows for it to also be a Configuration class, where it can then
+ * adds its properties to the Spring environment.
+ */
 @Parameters(commandDescription = "My description goes here")
 public class IngestRowsCommand extends CommandSupport {
+
+    @ParametersDelegate
+    private CommonOptions commonOptions = new CommonOptions();
 
     @Parameter(
         names = {"--jdbc_driver"},
@@ -42,28 +48,26 @@ public class IngestRowsCommand extends CommandSupport {
     )
     private String sql;
 
+    public Properties getEnvironmentProperties() {
+        Properties props = new Properties();
+        props.putAll(commonOptions.getEnvironmentProperties());
+        props.setProperty("jdbcDriver", jdbcDriver);
+        props.setProperty("jdbcUrl", jdbcUrl);
+        props.setProperty("jdbcUsername", jdbcUsername);
+        props.setProperty("jdbcPassword", jdbcPassword);
+        return props;
+    }
 
     @Override
     public void runJob() throws JobExecutionException {
-        // TODO Would be nice if there was an easy way - BeanWrapper? - to build this list of job parameters
-        // Preferably, the parent class would do this automatically on anything annotated with Parameter
         Map<String, JobParameter> jobParams = new HashMap<>();
-        jobParams.put("jdbc_driver", new JobParameter(jdbcDriver));
-        jobParams.put("jdbc_url", new JobParameter(jdbcUrl));
-        jobParams.put("jdbc_username", new JobParameter(jdbcUsername));
-        jobParams.put("jdbc_password", new JobParameter(jdbcPassword));
         jobParams.put("sql", new JobParameter(sql));
+        System.out.println("BS: " + commonOptions.getBatchSize());
+        jobParams.put("batch_size", new JobParameter(new Long(commonOptions.getBatchSize())));
 
+        CommonConfig.environmentProperties.putAll(getEnvironmentProperties());
         runJobWithParameters(jobParams, CommonConfig.class, IngestRowsConfig.class);
     }
 
-    protected Map<String, JobParameter> buildJobParametersFromFields() {
-        Map<String, JobParameter> jobParams = new HashMap<>();
-        BeanWrapper bw = new BeanWrapperImpl(this);
-        return jobParams;
-    }
-
-    public void setJdbcUrl(String jdbcUrl) {
-        this.jdbcUrl = jdbcUrl;
-    }
 }
+

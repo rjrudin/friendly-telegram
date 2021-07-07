@@ -1,0 +1,12 @@
+2021-07-07 11:14:35 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "BATCH_JOB_INSTANCE" not found; SQL statement:
+SELECT JOB_INSTANCE_ID, JOB_NAME from BATCH_JOB_INSTANCE where JOB_NAME = ? and JOB_KEY = ? [42102-193]
+2021-07-07 11:17:09 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "BATCH_JOB_INSTANCE" not found; SQL statement:
+SELECT JOB_INSTANCE_ID, JOB_NAME from BATCH_JOB_INSTANCE where JOB_NAME = ? and JOB_KEY = ? [42102-193]
+2021-07-07 11:19:33 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "BATCH_JOB_INSTANCE" not found; SQL statement:
+SELECT JOB_INSTANCE_ID, JOB_NAME from BATCH_JOB_INSTANCE where JOB_NAME = ? and JOB_KEY = ? [42102-193]
+2021-07-07 11:23:39 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "BATCH_JOB_INSTANCE" not found; SQL statement:
+SELECT JOB_INSTANCE_ID, JOB_NAME from BATCH_JOB_INSTANCE where JOB_NAME = ? and JOB_KEY = ? [42102-193]
