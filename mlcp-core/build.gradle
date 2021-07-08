@@ -30,7 +30,7 @@ dependencies {
     api 'org.slf4j:slf4j-api:1.7.30'
 
     testFixturesApi "org.junit.jupiter:junit-jupiter:5.7.1"
-    testFixturesApi "com.marklogic:ml-app-deployer:4.2.0"
+    testFixturesApi "com.marklogic:marklogic-junit5:1.0.0"
 }
 
 test {

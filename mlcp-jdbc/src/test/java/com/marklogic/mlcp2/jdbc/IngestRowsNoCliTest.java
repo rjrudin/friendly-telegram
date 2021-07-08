@@ -12,7 +12,7 @@ public class IngestRowsNoCliTest extends AbstractTest {
         configureMarkLogicConnection(runner.getCommonOptions());
 
         runner.setJdbcDriver("org.h2.Driver");
-        runner.setJdbcUrl("jdbc:h2:file:../data/h2/sample");
+        runner.setJdbcUrl("jdbc:h2:file:./data/h2/sample");
         runner.setJdbcUsername("sa");
         runner.setJdbcPassword("");
         runner.setSql("SELECT * FROM ITEM");

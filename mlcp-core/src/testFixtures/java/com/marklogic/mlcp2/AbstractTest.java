@@ -1,18 +1,23 @@
 package com.marklogic.mlcp2;
 
-import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.resource.databases.DatabaseManager;
-import org.junit.jupiter.api.BeforeEach;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ext.helper.DatabaseClientProvider;
+import com.marklogic.junit5.AbstractMarkLogicTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-public abstract class AbstractTest extends LoggingObject {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {MlcpTestConfig.class})
+public abstract class AbstractTest extends AbstractMarkLogicTest {
 
-    @BeforeEach
-    void clearDatabase() {
-        // TODO Use server eval to do this so we don't need ml-app-deployer
-        ManageClient client = new ManageClient(new ManageConfig("localhost", 8002, "admin", "admin"));
-        new DatabaseManager(client).clearDatabase("java-tester-content");
+    @Autowired
+    protected DatabaseClientProvider databaseClientProvider;
+
+    @Override
+    protected DatabaseClient getDatabaseClient() {
+        return databaseClientProvider.getDatabaseClient();
     }
 
     protected void configureMarkLogicConnection(CommonOptions options) {
