@@ -1,0 +1,28 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":mlcp-file")
+    implementation project(":mlcp-jdbc")
+
+    testImplementation project(":mlcp-test")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task runMain(type: JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "com.marklogic.mlcp2.cli.Main"
+    args = [
+        "--username", "admin",
+        "--password", "admin"
+    ]
+}
+

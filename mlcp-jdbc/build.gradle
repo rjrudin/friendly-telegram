@@ -1,0 +1,34 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api(project(":mlcp-core"))
+
+    // For JDBC access
+    api "org.springframework:spring-jdbc:5.3.7"
+
+    testImplementation(project(":mlcp-test"))
+
+    // For H2 test
+    testImplementation "com.h2database:h2:1.4.193"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task loadH2Data(type: JavaExec) {
+    description = "Populates a sample H2 database with some data that can be ingested into ML"
+    classpath = sourceSets.test.runtimeClasspath
+    main = "org.h2.tools.RunScript"
+    args = [
+        "-url", "jdbc:h2:file:./data/h2/sample",
+        "-user", "sa",
+        "-script", "./data/h2/h2setup.sql"
+    ]
+}

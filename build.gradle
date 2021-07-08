@@ -1,67 +1,7 @@
-plugins {
-    id 'java'
-}
-
 group 'com.marklogic'
 version '1.0-SNAPSHOT'
 
 repositories {
     jcenter()
     mavenCentral()
-}
-
-dependencies {
-    // Core stuff
-    implementation('com.marklogic:marklogic-client-api:5.4.0') {
-        // This isn't available via mavenCentral with its 2.3 coordinates, so it's excluded
-        // and then depended on below via its 2.5 coordinates
-        exclude module: "okhttp-digest"
-    }
-    implementation 'io.github.rburgst:okhttp-digest:2.5'
-    implementation "org.springframework.batch:spring-batch-core:4.3.3"
-
-    // For simplifying authentication
-    implementation "com.marklogic:ml-javaclient-util:4.2.0"
-
-    // For JDBC access
-    implementation "org.springframework:spring-jdbc:5.3.7"
-
-    // For CLI
-    implementation "com.beust:jcommander:1.72"
-
-    // For logging
-    implementation 'ch.qos.logback:logback-classic:1.2.3'
-    implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-
-    // For H2 test
-    implementation "com.h2database:h2:1.4.193"
-
-    testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
-    //testImplementation "com.marklogic:marklogic-junit5:1.0.0"
-    testImplementation "com.marklogic:ml-app-deployer:4.1.1"
-}
-
-test {
-    useJUnitPlatform()
-}
-
-task loadH2Data(type: JavaExec) {
-    description = "Populates a sample H2 database with some data that can be ingested into ML"
-    classpath = sourceSets.test.runtimeClasspath
-    main = "org.h2.tools.RunScript"
-    args = [
-        "-url", "jdbc:h2:file:./data/h2/sample",
-        "-user", "sa",
-        "-script", "./data/h2/h2setup.sql"
-    ]
-}
-
-task run(type: JavaExec) {
-    classpath = sourceSets.test.runtimeClasspath
-    main = "com.marklogic.mlcp2.cli.Main"
-    args = [
-        "--username", "admin",
-        "--password", "admin"
-    ]
 }

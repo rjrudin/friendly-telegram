@@ -1,0 +1,39 @@
+plugins {
+    id 'java-library'
+}
+
+group 'com.marklogic'
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    // Core stuff
+    api('com.marklogic:marklogic-client-api:5.4.0') {
+        // This isn't available via mavenCentral with its 2.3 coordinates, so it's excluded
+        // and then depended on below via its 2.5 coordinates
+        exclude module: "okhttp-digest"
+    }
+    implementation 'io.github.rburgst:okhttp-digest:2.5'
+    api "org.springframework.batch:spring-batch-core:4.3.3"
+
+    // For simplifying authentication
+    api "com.marklogic:ml-javaclient-util:4.2.0"
+
+    // For CLI
+    api "com.beust:jcommander:1.72"
+
+    // For logging
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
+    api 'org.slf4j:slf4j-api:1.7.30'
+
+    testImplementation project(":mlcp-test")
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,21 @@
+plugins {
+    id 'java-library'
+}
+
+group 'com.marklogic'
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    api project(":mlcp-core")
+
+    testImplementation project(":mlcp-test")
+}
+
+test {
+    useJUnitPlatform()
+}
