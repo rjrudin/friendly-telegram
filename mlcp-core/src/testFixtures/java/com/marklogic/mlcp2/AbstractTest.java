@@ -10,7 +10,15 @@ public abstract class AbstractTest extends LoggingObject {
 
     @BeforeEach
     void clearDatabase() {
+        // TODO Use server eval to do this so we don't need ml-app-deployer
         ManageClient client = new ManageClient(new ManageConfig("localhost", 8002, "admin", "admin"));
         new DatabaseManager(client).clearDatabase("java-tester-content");
+    }
+
+    protected void configureMarkLogicConnection(CommonOptions options) {
+        options.setHost("localhost");
+        options.setPort(8003);
+        options.setUsername("admin");
+        options.setPassword("admin");
     }
 }

@@ -1,9 +1,7 @@
 plugins {
     id 'java-library'
+    id 'java-test-fixtures'
 }
-
-group 'com.marklogic'
-version '1.0-SNAPSHOT'
 
 repositories {
     jcenter()
@@ -31,7 +29,8 @@ dependencies {
     implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
     api 'org.slf4j:slf4j-api:1.7.30'
 
-    testImplementation project(":mlcp-test")
+    testFixturesApi "org.junit.jupiter:junit-jupiter:5.7.1"
+    testFixturesApi "com.marklogic:ml-app-deployer:4.2.0"
 }
 
 test {

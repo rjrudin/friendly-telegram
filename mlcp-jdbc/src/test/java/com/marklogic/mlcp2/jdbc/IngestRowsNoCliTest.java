@@ -9,10 +9,7 @@ public class IngestRowsNoCliTest extends AbstractTest {
     @Test
     void test() throws Exception {
         IngestRowsJobRunner runner = new IngestRowsJobRunner();
-        runner.getCommonOptions().setHost("localhost");
-        runner.getCommonOptions().setPort(8003);
-        runner.getCommonOptions().setUsername("admin");
-        runner.getCommonOptions().setPassword("admin");
+        configureMarkLogicConnection(runner.getCommonOptions());
 
         runner.setJdbcDriver("org.h2.Driver");
         runner.setJdbcUrl("jdbc:h2:file:../data/h2/sample");

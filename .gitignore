@@ -3,8 +3,6 @@
 bin
 build
 out
-data/h2/*.mv.db
-data/h2/*.trace.db
 .classpath
 .project
 .settings

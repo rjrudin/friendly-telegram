@@ -1,6 +1,5 @@
 rootProject.name = 'mlcp-spring-batch'
 
-include ':mlcp-test'
 include ':mlcp-core'
 include ':mlcp-file'
 include ':mlcp-jdbc'
