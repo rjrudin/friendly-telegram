@@ -12,6 +12,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {MlcpTestConfig.class})
 public abstract class AbstractTest extends AbstractMarkLogicTest {
 
+    public final static String HOST = "localhost";
+    public final static int PORT = 8003;
+    public final static String USERNAME = "mlcp-test-user";
+    public final static String PASSWORD = "password";
+
     @Autowired
     protected DatabaseClientProvider databaseClientProvider;
 
@@ -21,9 +26,9 @@ public abstract class AbstractTest extends AbstractMarkLogicTest {
     }
 
     protected void configureMarkLogicConnection(CommonOptions options) {
-        options.setHost("localhost");
-        options.setPort(8003);
-        options.setUsername("admin");
-        options.setPassword("admin");
+        options.setHost(HOST);
+        options.setPort(PORT);
+        options.setUsername(USERNAME);
+        options.setPassword(PASSWORD);
     }
 }

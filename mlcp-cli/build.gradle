@@ -22,8 +22,8 @@ task runMain(type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = "com.marklogic.mlcp2.cli.Main"
     args = [
-        "--username", "admin",
-        "--password", "admin"
+        "--username", "mlcp-test-user",
+        "--password", "password"
     ]
 }
 

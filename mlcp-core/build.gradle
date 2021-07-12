@@ -1,6 +1,9 @@
 plugins {
     id 'java-library'
     id 'java-test-fixtures'
+
+    // Used for deploying an application that the JUnit tests run against
+    id "com.marklogic.ml-gradle" version "4.2.0"
 }
 
 repositories {

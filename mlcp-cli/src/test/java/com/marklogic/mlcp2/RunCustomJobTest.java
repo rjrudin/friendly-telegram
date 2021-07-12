@@ -8,10 +8,10 @@ public class RunCustomJobTest extends AbstractTest {
     void test() {
         Main.main(new String[]{
             "custom",
-            "--host", "localhost",
-            "--port", "8003",
-            "--username", "admin",
-            "--password", "admin",
+            "--host", HOST,
+            "--port", PORT + "",
+            "--username", USERNAME,
+            "--password", PASSWORD,
             "--class_name", "org.example.CustomConfigExample",
             "-Dmy_limit=12"
         });
