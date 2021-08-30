@@ -31,4 +31,12 @@ public abstract class AbstractTest extends AbstractMarkLogicTest {
         options.setUsername(USERNAME);
         options.setPassword(PASSWORD);
     }
+
+    protected int getCollectionSize(String collection) {
+        return Integer.parseInt(
+            getDatabaseClient().newServerEval()
+                .javascript(format("cts.estimate(cts.collectionQuery('%s'))", collection))
+                .evalAs(String.class)
+        );
+    }
 }

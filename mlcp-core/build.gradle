@@ -3,37 +3,27 @@ plugins {
     id 'java-test-fixtures'
 
     // Used for deploying an application that the JUnit tests run against
-    id "com.marklogic.ml-gradle" version "4.2.0"
+    id "com.marklogic.ml-gradle" version "4.3.2"
 }
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
 dependencies {
-    // Core stuff
-    api('com.marklogic:marklogic-client-api:5.4.0') {
-        // This isn't available via mavenCentral with its 2.3 coordinates, so it's excluded
-        // and then depended on below via its 2.5 coordinates
-        exclude module: "okhttp-digest"
-    }
-    implementation 'io.github.rburgst:okhttp-digest:2.5'
     api "org.springframework.batch:spring-batch-core:4.3.3"
-
-    // For simplifying authentication
-    api "com.marklogic:ml-javaclient-util:4.2.0"
+    api "com.marklogic:ml-javaclient-util:4.3.0" // Brings in Java Client 5.5.0 and simplifies authentication
 
     // The CLI is part of "core" so that the Parameter annotation can be used on classes like CommonOptions.
-    api "com.beust:jcommander:1.72"
+    api "com.beust:jcommander:1.81"
 
     // For logging
-    implementation 'ch.qos.logback:logback-classic:1.2.3'
-    implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
+    implementation 'ch.qos.logback:logback-classic:1.2.4'
+    implementation 'org.slf4j:jcl-over-slf4j:1.7.31'
     api 'org.slf4j:slf4j-api:1.7.30'
 
-    testFixturesApi "org.junit.jupiter:junit-jupiter:5.7.1"
-    testFixturesApi "com.marklogic:marklogic-junit5:1.0.0"
+    testFixturesApi "org.junit.jupiter:junit-jupiter:5.7.2"
+    testFixturesApi "com.marklogic:marklogic-junit5:1.1.0"
 }
 
 test {

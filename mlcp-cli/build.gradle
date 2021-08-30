@@ -3,7 +3,6 @@ plugins {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
@@ -12,6 +11,9 @@ dependencies {
     implementation project(":mlcp-jdbc")
 
     testImplementation(testFixtures(project(":mlcp-core")))
+
+    // For H2 test
+    testImplementation "com.h2database:h2:1.4.193"
 }
 
 test {

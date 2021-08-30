@@ -80,6 +80,59 @@ public class BulkContentItemWriter extends ItemStreamSupport implements ItemStre
         });
     }
 
+    private void writeEndpointModuleIfNecessary(DatabaseClient client) {
+        String script = "xdmp.invokeFunction(function() {\n" +
+            "  declareUpdate();\n" +
+            "  \n" +
+            "  const permissions = [\n" +
+            "    xdmp.permission('rest-reader', 'read'), \n" +
+            "    xdmp.permission('rest-admin', 'update'), \n" +
+            "    xdmp.permission('rest-extension-user', 'execute')\n" +
+            "  ];\n" +
+            "  \n" +
+            "  const apiUri = '/writeDocuments.api';\n" +
+            "  const moduleUri = '/writeDocuments.sjs';\n" +
+            "  \n" +
+            "  if (!fn.docAvailable(apiUri)) {\n" +
+            "    const apiDoc = \n" + BULK_API + ";\n" +
+            "    console.log('Inserting: ' + apiUri);\n" +
+            "    xdmp.documentInsert(apiUri, apiDoc, permissions);\n" +
+            "  }\n" +
+            "  \n" +
+            "  if (!fn.docAvailable(moduleUri)) {\n" +
+            "    const moduleDoc = `'use strict';\n" +
+            "\n" +
+            "declareUpdate();\n" +
+            "\n" +
+            "function normalizeInputToArray(input) {\n" +
+            "  var inputArray;\n" +
+            "  if (input instanceof Sequence) {\n" +
+            "    inputArray = input.toArray().map(item => fn.head(xdmp.fromJSON(item)));\n" +
+            "  } else if (input instanceof Document) {\n" +
+            "    inputArray = [fn.head(xdmp.fromJSON(input))];\n" +
+            "  } else {\n" +
+            "    // Assumed to be an array at this point, which is the case for unit tests\n" +
+            "    inputArray = fn.head(xdmp.fromJSON(input));\n" +
+            "  }\n" +
+            "  return inputArray;\n" +
+            "}\n" +
+            "\n" +
+            "var endpointConstants = fn.head(xdmp.fromJSON(endpointConstants));\n" +
+            "const inputArray = normalizeInputToArray(input);\n" +
+            "\n" +
+            "inputArray.forEach(record => {\n" +
+            "  xdmp.documentInsert('/doc/' + sem.uuidString() + '.json', record,\n" +
+            "    [xdmp.permission('rest-reader', 'read'), xdmp.permission('rest-writer', 'update')],\n" +
+            "    'mlcp-data'\n" +
+            "  );\n" +
+            "});`;\n" +
+            "    \n" +
+            "    console.log('Inserting: ' + moduleUri);\n" +
+            "    xdmp.documentInsert(moduleUri, xdmp.toJSON(moduleDoc), permissions);\n" +
+            "  }\n" +
+            "}, {database: xdmp.modulesDatabase()})";
+    }
+
     @Override
     public void write(List<? extends Content> items) {
         InputCaller.BulkInputCaller caller = bulkInputCallers.get(callerCounter);

@@ -14,6 +14,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+/**
+ * Example of how a user could create their own Spring Configuration class that defines a Spring Batch job.
+ * Can then be run via CustomJobRunner.
+ */
 @Configuration
 @Import(BaseConfig.class)
 public class CustomConfigExample {

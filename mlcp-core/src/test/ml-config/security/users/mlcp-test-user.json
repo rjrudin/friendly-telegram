@@ -1,9 +1,11 @@
 {
   "user-name": "mlcp-test-user",
   "password": "password",
+  "description": "Assigning 'security' role as a hack so that user gains any-uri privilege",
   "role": [
     "rest-reader",
     "rest-writer",
-    "manage-admin"
+    "manage-admin",
+    "security"
   ]
 }

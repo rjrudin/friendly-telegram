@@ -7,5 +7,4 @@ out
 .project
 .settings
 .vscode
-data/h2/*.db
 

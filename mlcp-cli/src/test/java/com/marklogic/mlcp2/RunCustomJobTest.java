@@ -2,6 +2,8 @@ package com.marklogic.mlcp2;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class RunCustomJobTest extends AbstractTest {
 
     @Test
@@ -15,5 +17,8 @@ public class RunCustomJobTest extends AbstractTest {
             "--class_name", "org.example.CustomConfigExample",
             "-Dmy_limit=12"
         });
+
+        assertEquals(12, getCollectionSize("mlcp-data"), "Expecting 12 docs since my_limit=12 in the args passed " +
+            "to the custom config class");
     }
 }
