@@ -14,7 +14,7 @@ public abstract class AbstractTest extends AbstractMarkLogicTest {
 
     public final static String HOST = "localhost";
     public final static int PORT = 8003;
-    public final static String USERNAME = "mlcp-test-user";
+    public final static String USERNAME = "mlcp2-test-user";
     public final static String PASSWORD = "password";
 
     @Autowired

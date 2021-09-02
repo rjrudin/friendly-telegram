@@ -1,6 +1,8 @@
-package com.marklogic.mlcp2;
+package com.marklogic.mlcp2.cli;
 
 import com.beust.jcommander.JCommander;
+import com.marklogic.mlcp2.CustomJobRunner;
+import com.marklogic.mlcp2.JobRunner;
 import com.marklogic.mlcp2.file.IngestFilesJobRunner;
 import com.marklogic.mlcp2.jdbc.IngestRowsJobRunner;
 import org.springframework.batch.core.JobExecutionException;

@@ -2,7 +2,10 @@ package com.marklogic.mlcp2.file;
 
 import com.marklogic.mlcp2.AbstractTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InputFilePathTest extends AbstractTest {
 
@@ -13,6 +16,8 @@ public class InputFilePathTest extends AbstractTest {
         runner.setInputFilePath("data/csv/**/*.csv");
 
         JobExecution jobExecution = runner.runJob();
-        logger.info(jobExecution.toString());
+        assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus(), "Expected COMPLETED: " + jobExecution);
+        assertEquals(9, getCollectionSize("mlcp-data"), "Expected 9 docs, 3 for each csv in the mlcp-file/data/csv directory");
+
     }
 }

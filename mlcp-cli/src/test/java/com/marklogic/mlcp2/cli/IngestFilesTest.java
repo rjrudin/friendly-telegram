@@ -1,5 +1,7 @@
-package com.marklogic.mlcp2;
+package com.marklogic.mlcp2.cli;
 
+import com.marklogic.mlcp2.AbstractTest;
+import com.marklogic.mlcp2.cli.Main;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

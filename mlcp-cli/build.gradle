@@ -20,11 +20,17 @@ test {
     useJUnitPlatform()
 }
 
-task runMain(type: JavaExec) {
-    classpath = sourceSets.test.runtimeClasspath
+// See https://docs.gradle.org/current/userguide/application_plugin.html
+application {
     mainClass = "com.marklogic.mlcp2.cli.Main"
+}
+
+task runMain(type: JavaExec) {
+    description = "For ad hoc testing of the CLI main program"
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "com.marklogic.mlcp2.Main"
     args = [
-        "--username", "mlcp-test-user",
+        "--username", "mlcp2-test-user",
         "--password", "password"
     ]
 }

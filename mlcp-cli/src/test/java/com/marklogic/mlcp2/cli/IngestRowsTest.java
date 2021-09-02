@@ -1,5 +1,7 @@
-package com.marklogic.mlcp2;
+package com.marklogic.mlcp2.cli;
 
+import com.marklogic.mlcp2.AbstractTest;
+import com.marklogic.mlcp2.cli.Main;
 import org.h2.tools.RunScript;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

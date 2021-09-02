@@ -1,0 +1,7 @@
+{
+  "user-name": "mlcp2-test-user",
+  "password": "password",
+  "role": [
+    "mlcp2-test-role"
+  ]
+}

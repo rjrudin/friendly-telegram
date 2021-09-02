@@ -62,6 +62,7 @@ public class BulkContentItemWriter extends ItemStreamSupport implements ItemStre
         bulkInputCallers = new ArrayList<>();
 
         DatabaseClient databaseClient = new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(databaseClientConfig);
+        writeEndpointModuleIfNecessary(databaseClient);
 
         List<DatabaseClient> databaseClients = Arrays.asList(databaseClient);
         databaseClients.forEach(client -> {
@@ -79,6 +80,42 @@ public class BulkContentItemWriter extends ItemStreamSupport implements ItemStre
             bulkInputCallers.add(inputCaller.bulkCaller(callContexts, threadCount));
         });
     }
+
+    @Override
+    public void write(List<? extends Content> items) {
+        InputCaller.BulkInputCaller caller = bulkInputCallers.get(callerCounter);
+        callerCounter++;
+        if (callerCounter >= bulkInputCallers.size()) {
+            callerCounter = 0;
+        }
+        items.forEach(item -> caller.accept(item.getInputStream()));
+    }
+
+    @Override
+    public void close() {
+        this.bulkInputCallers.forEach(caller -> caller.awaitCompletion());
+    }
+
+    private static final String BULK_API = "{\n" +
+        "  \"endpoint\": \"/writeDocuments.sjs\",\n" +
+        "  \"params\": [\n" +
+        "    {\n" +
+        "      \"name\": \"endpointConstants\",\n" +
+        "      \"datatype\": \"jsonDocument\",\n" +
+        "      \"multiple\": false,\n" +
+        "      \"nullable\": true\n" +
+        "    },\n" +
+        "    {\n" +
+        "      \"name\": \"input\",\n" +
+        "      \"datatype\": \"jsonDocument\",\n" +
+        "      \"multiple\": true,\n" +
+        "      \"nullable\": true\n" +
+        "    }\n" +
+        "  ],\n" +
+        "  \"$bulk\": {\n" +
+        "    \"inputBatchSize\": 100\n" +
+        "  }\n" +
+        "}";
 
     private void writeEndpointModuleIfNecessary(DatabaseClient client) {
         String script = "xdmp.invokeFunction(function() {\n" +
@@ -131,41 +168,7 @@ public class BulkContentItemWriter extends ItemStreamSupport implements ItemStre
             "    xdmp.documentInsert(moduleUri, xdmp.toJSON(moduleDoc), permissions);\n" +
             "  }\n" +
             "}, {database: xdmp.modulesDatabase()})";
-    }
 
-    @Override
-    public void write(List<? extends Content> items) {
-        InputCaller.BulkInputCaller caller = bulkInputCallers.get(callerCounter);
-        callerCounter++;
-        if (callerCounter >= bulkInputCallers.size()) {
-            callerCounter = 0;
-        }
-        items.forEach(item -> caller.accept(item.getInputStream()));
+        client.newServerEval().javascript(script).evalAs(String.class);
     }
-
-    @Override
-    public void close() {
-        this.bulkInputCallers.forEach(caller -> caller.awaitCompletion());
-    }
-
-    private static final String BULK_API = "{\n" +
-            "  \"endpoint\": \"/writeDocuments.sjs\",\n" +
-            "  \"params\": [\n" +
-            "    {\n" +
-            "      \"name\": \"endpointConstants\",\n" +
-            "      \"datatype\": \"jsonDocument\",\n" +
-            "      \"multiple\": false,\n" +
-            "      \"nullable\": true\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"name\": \"input\",\n" +
-            "      \"datatype\": \"jsonDocument\",\n" +
-            "      \"multiple\": true,\n" +
-            "      \"nullable\": true\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"$bulk\": {\n" +
-            "    \"inputBatchSize\": 100\n" +
-            "  }\n" +
-            "}";
 }
