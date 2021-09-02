@@ -22,6 +22,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -72,15 +73,19 @@ public class IngestRowsConfig extends LoggingObject {
     }
 
     /**
-     * Supports dynamically loading a JDBC driver via a user-specified file path.
-     *
-     * TODO Should support a connection pool, such as BasicDataSource or ComboPooledDataSource
+     * Supports dynamically constructing a JDBC DataSource via a user-specified file path.
      */
-    private SimpleDriverDataSource newDataSource() throws Exception {
+    private DataSource newDataSource() throws Exception {
         final String jdbcDriverPath = environment.getProperty("jdbc_driver_path");
         final String jdbcDriver = environment.getProperty("jdbc_driver");
         final String jdbcUrl = environment.getRequiredProperty("jdbc_url");
+
+        // TODO This should really use a modern pooling DataSource like HikariCP. At least for H2 though, which is used
+        // for testing, it doesn't appear to be possibly to dynamically load the H2 DataSource class via
+        // HikariDataSource as the latter doesn't accept a custom class loader. It instead requires a DataSource to be
+        // provided to it, which could be challenging to support via simple properties.
         SimpleDriverDataSource dataSource;
+
         if (StringUtils.hasText(jdbcDriverPath)) {
             // TODO Assuming a single file, likely need to support a directory
             ClassLoader loader = URLClassLoader.newInstance(new URL[]{new File(jdbcDriverPath).toURI().toURL()});

@@ -20,7 +20,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":mlcp-core")))
 
-    h2 "com.h2database:h2:1.4.193"
+    h2 "com.h2database:h2:1.4.200"
 }
 
 test {

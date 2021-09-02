@@ -16,7 +16,7 @@ public class IngestRowsTest extends AbstractTest {
             "--username", USERNAME,
             "--password", PASSWORD,
             "--batch_size", "50",
-            "--jdbc_driver_path", "../data/h2/h2-1.4.193.jar",
+            "--jdbc_driver_path", "../data/h2/h2-1.4.200.jar",
             "--jdbc_driver", "org.h2.Driver",
             "--jdbc_url", "jdbc:h2:file:../data/h2/h2-sample-db",
             "--jdbc_username", "sa",
