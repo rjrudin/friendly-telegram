@@ -18,9 +18,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.sql.Driver;
 import java.util.Map;
 
 @Configuration
@@ -41,22 +46,15 @@ public class IngestRowsConfig extends LoggingObject {
         StepBuilderFactory stepBuilderFactory,
         @Value("#{jobParameters['batch_size']}") Integer batchSize,
         @Value("#{jobParameters['sql']}") String sql
-    ) {
+    ) throws Exception {
         Assert.hasText(sql, "Job parameter 'sql' must be defined");
-
-        // TODO Use a connection pool here
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(environment.getRequiredProperty("jdbc_driver"));
-        dataSource.setUrl(environment.getRequiredProperty("jdbc_url"));
-        dataSource.setUsername(environment.getProperty("jdbc_username"));
-        dataSource.setPassword(environment.getProperty("jdbc_password"));
 
         // Uses Spring Batch's JdbcCursorItemReader and Spring JDBC's ColumnMapRowMapper to map each row
         // to a Map<String, Object>. Normally, if you want more control, standard practice is to bind column values to
         // a POJO and perform any validation/transformation/etc you need to on that object.
         JdbcCursorItemReader<Map<String, Object>> jdbcReader = new JdbcCursorItemReader();
+        jdbcReader.setDataSource(newDataSource());
         jdbcReader.setRowMapper(new ColumnMapRowMapper());
-        jdbcReader.setDataSource(dataSource);
         jdbcReader.setSql(sql);
         ItemReader<Map<String, Object>> reader = jdbcReader;
 
@@ -73,4 +71,30 @@ public class IngestRowsConfig extends LoggingObject {
         return new BulkContentItemWriter();
     }
 
+    /**
+     * Supports dynamically loading a JDBC driver via a user-specified file path.
+     *
+     * TODO Should support a connection pool, such as BasicDataSource or ComboPooledDataSource
+     */
+    private SimpleDriverDataSource newDataSource() throws Exception {
+        final String jdbcDriverPath = environment.getProperty("jdbc_driver_path");
+        final String jdbcDriver = environment.getProperty("jdbc_driver");
+        final String jdbcUrl = environment.getRequiredProperty("jdbc_url");
+        SimpleDriverDataSource dataSource;
+        if (StringUtils.hasText(jdbcDriverPath)) {
+            // TODO Assuming a single file, likely need to support a directory
+            ClassLoader loader = URLClassLoader.newInstance(new URL[]{new File(jdbcDriverPath).toURI().toURL()});
+            Class<?> clazz = loader.loadClass(jdbcDriver);
+            Driver driver = (Driver) clazz.newInstance();
+            dataSource = new SimpleDriverDataSource(driver, jdbcUrl);
+        } else {
+            dataSource = new SimpleDriverDataSource();
+            dataSource.setUrl(jdbcUrl);
+            dataSource.setDriverClass((Class<? extends Driver>) Class.forName(jdbcDriver));
+        }
+
+        dataSource.setUsername(environment.getProperty("jdbc_username"));
+        dataSource.setPassword(environment.getProperty("jdbc_password"));
+        return dataSource;
+    }
 }

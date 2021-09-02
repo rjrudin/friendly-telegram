@@ -47,8 +47,16 @@ Usage: java -jar <name of jar> [command] [command options]
 
 To try ingesting files, run the following:
 
-    ./mlcp2/bin/mlcp2 ingestFiles --host localhost --port 8003 --username mlcp2-test-user --password password --input_file_path "data/csv/**/*.csv"
+```
+    ./mlcp2/bin/mlcp2 ingestFiles --host localhost --port 8003 --username mlcp2-test-user --password password 
+      --input_file_path "data/csv/**/*.csv"
+```
 
-You can also ingest rows from a small [H2](https://h2database.com/html/main.html) database:
+You can also ingest rows from a small [H2](https://h2database.com/html/main.html) database; note that this requires 
+specifying the location of a JDBC driver jar, which will then be dynamically loaded from the filesystem:
 
-    
+```
+    ./mlcp2/bin/mlcp2 ingestRows --host localhost --port 8003 --username mlcp2-test-user --password password 
+      --jdbc_driver org.h2.Driver --jdbc_url "jdbc:h2:file:./data/h2/h2-sample-db" --jdbc_username sa --sql "SELECT * FROM CUSTOMER" 
+      --jdbc_driver_path "data/h2/h2-1.4.193.jar"
+```

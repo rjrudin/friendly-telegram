@@ -14,6 +14,7 @@ public class IngestRowsNoCliTest extends AbstractTest {
         IngestRowsJobRunner runner = new IngestRowsJobRunner();
         configureMarkLogicConnection(runner.getCommonOptions());
 
+        runner.setJdbcDriverPath("../data/h2/h2-1.4.193.jar");
         runner.setJdbcDriver("org.h2.Driver");
         runner.setJdbcUrl("jdbc:h2:file:../data/h2/h2-sample-db");
         runner.setJdbcUsername("sa");

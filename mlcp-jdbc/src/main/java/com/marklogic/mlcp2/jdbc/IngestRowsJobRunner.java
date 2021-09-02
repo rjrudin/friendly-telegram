@@ -23,6 +23,12 @@ public class IngestRowsJobRunner extends AbstractJobRunner {
     private CommonOptions commonOptions = new CommonOptions();
 
     @Parameter(
+        names = {"--jdbc_driver_path"},
+        description = "Optional path to the location of the JDBC driver jar"
+    )
+    private String jdbcDriverPath;
+
+    @Parameter(
         names = {"--jdbc_driver"},
         description = "TODO"
     )
@@ -51,6 +57,7 @@ public class IngestRowsJobRunner extends AbstractJobRunner {
     @Override
     public JobExecution runJob() throws JobExecutionException {
         addCommonEnvironmentProperties(commonOptions);
+        addEnvironmentProperty("jdbc_driver_path", jdbcDriverPath);
         addEnvironmentProperty("jdbc_driver", jdbcDriver);
         addEnvironmentProperty("jdbc_url", jdbcUrl);
         addEnvironmentProperty("jdbc_username", jdbcUsername);
@@ -108,6 +115,14 @@ public class IngestRowsJobRunner extends AbstractJobRunner {
 
     public void setSql(String sql) {
         this.sql = sql;
+    }
+
+    public String getJdbcDriverPath() {
+        return jdbcDriverPath;
+    }
+
+    public void setJdbcDriverPath(String jdbcDriverPath) {
+        this.jdbcDriverPath = jdbcDriverPath;
     }
 }
 
