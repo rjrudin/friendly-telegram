@@ -8,3 +8,5 @@ out
 .settings
 .vscode
 
+# Directory where the cli application is extracted to per the README
+mlcp2
