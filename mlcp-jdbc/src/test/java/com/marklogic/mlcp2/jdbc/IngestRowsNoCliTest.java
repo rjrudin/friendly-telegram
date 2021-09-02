@@ -1,8 +1,6 @@
 package com.marklogic.mlcp2.jdbc;
 
 import com.marklogic.mlcp2.AbstractTest;
-import org.h2.tools.RunScript;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -11,23 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IngestRowsNoCliTest extends AbstractTest {
 
-    @BeforeEach
-    void beforeEach() throws Exception {
-        // Setup a sample h2 database for this test
-        RunScript.main(
-            "-url", "jdbc:h2:file:./build/h2-sample-db",
-            "-user", "sa",
-            "-script", "data/setup-h2sample-db.sql"
-        );
-    }
-
     @Test
     void test() throws Exception {
         IngestRowsJobRunner runner = new IngestRowsJobRunner();
         configureMarkLogicConnection(runner.getCommonOptions());
 
         runner.setJdbcDriver("org.h2.Driver");
-        runner.setJdbcUrl("jdbc:h2:file:./build/h2-sample-db");
+        runner.setJdbcUrl("jdbc:h2:file:../data/h2/h2-sample-db");
         runner.setJdbcUsername("sa");
         runner.setJdbcPassword("");
         runner.setSql("SELECT * FROM ITEM");

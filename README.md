@@ -47,7 +47,7 @@ Usage: java -jar <name of jar> [command] [command options]
 
 To try ingesting files, run the following:
 
-    ./mlcp2/bin/mlcp2 ingestFiles --host localhost --port 8003 --username mlcp2-test-user --password password --input_file_path "mlcp-file/data/csv/**/*.csv"
+    ./mlcp2/bin/mlcp2 ingestFiles --host localhost --port 8003 --username mlcp2-test-user --password password --input_file_path "data/csv/**/*.csv"
 
 You can also ingest rows from a small [H2](https://h2database.com/html/main.html) database:
 

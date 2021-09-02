@@ -13,7 +13,7 @@ public class InputFilePathTest extends AbstractTest {
     void test() throws Exception {
         IngestFilesJobRunner runner = new IngestFilesJobRunner();
         configureMarkLogicConnection(runner.getCommonOptions());
-        runner.setInputFilePath("data/csv/**/*.csv");
+        runner.setInputFilePath("../data/csv/**/*.csv");
 
         JobExecution jobExecution = runner.runJob();
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus(), "Expected COMPLETED: " + jobExecution);
