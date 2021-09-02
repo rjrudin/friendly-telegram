@@ -93,6 +93,8 @@ JobExecution object. There's no need to abstract over Spring Batch yet; the JobE
 that has a good deal of info in it about the JobExecution.
 
 A JobRunner impl is responsible for running a Spring Batch job. It depends on a class with the Spring "Configuration" 
-annotation on it which is expected to define the Spring Batch components. The JobRunner is also responsible for passing
-user-defined config to the Configuration class, either via Spring Environment properties or via JobParameters.
+annotation on it which is expected to define the Spring Batch components. The Configuration class is effectively the 
+"guts" of the batch process, but it's decoupled from the CLI so that it can be reused in any context. 
 
+The JobRunner will then start a Spring Batch process based on the associated Configuration class. It will pass
+user arguments into the Spring Batch process, either as Spring Environment properties or as Spring Batch job parameters.
